@@ -103,21 +103,20 @@ startBtn.addEventListener("click", async () => {
       
       // Update statuses to matched
       await supabase.from('users').update({ status: 'matched' }).in('id', [myUserId, match.id]);
+      
+      isCaller = true;
 
-      // Create the room
+      // 1. Create WebRTC Offer FIRST (Fixes the race condition)
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+
       const { data: room } = await supabase
         .from('rooms')
-        .insert([{ user_a: myUserId, user_b: match.id }])
+        .insert([{ user_a: myUserId, user_b: match.id, offer: offer }])
         .select()
         .maybeSingle();
         
       currentRoomId = room.id;
-      isCaller = true;
-
-      // Create WebRTC Offer and save to DB
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      await supabase.from('rooms').update({ offer: offer }).eq('id', currentRoomId);
 
       // Listen for the Answer from the Callee
       supabase.channel('caller_room').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${currentRoomId}` }, 
