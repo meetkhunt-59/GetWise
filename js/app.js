@@ -28,6 +28,7 @@ let peerConnection = null;
 let isMuted = false;
 let myUserId = null;
 let currentRoomId = null;
+let isCaller = false; 
 
 // 5. Start Call & Matchmaking Logic
 startBtn.addEventListener("click", async () => {
@@ -49,7 +50,7 @@ startBtn.addEventListener("click", async () => {
         if (currentRoomId && candidate) {
           await supabase.from('candidates').insert([{ 
             room_id: currentRoomId, 
-            is_caller: myUserId === currentRoomId.caller_id, // We will track this below
+            is_caller: isCaller,
             candidate: candidate 
           }]);
         }
@@ -111,7 +112,7 @@ startBtn.addEventListener("click", async () => {
         .maybeSingle();
         
       currentRoomId = room.id;
-      currentRoomId.caller_id = myUserId; // Tag for ICE candidates
+      isCaller = true;
 
       // Create WebRTC Offer and save to DB
       const offer = await peerConnection.createOffer();
@@ -146,7 +147,7 @@ startBtn.addEventListener("click", async () => {
         async (payload) => {
           startBtn.textContent = "Connecting (Callee)...";
           currentRoomId = payload.new.id;
-          currentRoomId.caller_id = payload.new.user_a; 
+          isCaller = false;
           const offer = payload.new.offer;
 
           // Accept Offer, Create Answer, and save to DB
