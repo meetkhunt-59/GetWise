@@ -8,8 +8,8 @@ import { getLocalStream, toggleAudio, stopStream } from "./media.js";
 import { createPeerConnection, addLocalTracks } from "./webrtc.js";
 
 // 2. Initialize Supabase Client
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+const SUPABASE_URL = 'https://nlwzzgdpmuworvcblisw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sd3p6Z2RwbXV3b3J2Y2JsaXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzNDA2NzAsImV4cCI6MjEwMDkxNjY3MH0.do204MUbBxe90__5ssN2v5qFNYgRs4c1cb6xh30wRVw';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 3. DOM Elements Mapping
@@ -69,11 +69,20 @@ startBtn.addEventListener("click", async () => {
     startBtn.textContent = "Searching for peer...";
     
     // 1. Insert user into 'users' table
-    const { data: user } = await supabase
+    const { data: user, error: insertError } = await supabase
       .from('users')
       .insert([{ standard: selectedStandard, status: 'searching' }])
       .select()
       .single();
+
+    // If Supabase blocks the insert, stop the code and show the error
+    if (insertError) {
+      console.error("Supabase Insert Error:", insertError);
+      alert("Database Error: " + insertError.message);
+      startBtn.disabled = false;
+      startBtn.textContent = "Start Call";
+      return; 
+    }
       
     myUserId = user.id;
 
