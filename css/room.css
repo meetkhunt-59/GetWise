@@ -32,6 +32,8 @@ body {
     height: 50%;
 }
 #stream-1{
+    transform: scaleX(-1);
+    
     width: 47%;
     height: 50%;
     border: #FFFFFA 2px solid;
