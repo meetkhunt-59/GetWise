@@ -94,7 +94,7 @@ startBtn.addEventListener("click", async () => {
       .eq('status', 'searching')
       .neq('id', myUserId)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (match) {
       // --- I AM THE CALLER ---
@@ -108,7 +108,7 @@ startBtn.addEventListener("click", async () => {
         .from('rooms')
         .insert([{ user_a: myUserId, user_b: match.id }])
         .select()
-        .single();
+        .maybeSingle();
         
       currentRoomId = room.id;
       currentRoomId.caller_id = myUserId; // Tag for ICE candidates
