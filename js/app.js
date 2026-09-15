@@ -106,9 +106,9 @@ startBtn.addEventListener("click", async () => {
       
       isCaller = true;
 
-      // 1. Create WebRTC Offer FIRST (Fixes the race condition)
+      // Create WebRTC Offer
       const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+      // DO NOT setLocalDescription here yet! Wait for currentRoomId.
 
       const { data: room } = await supabase
         .from('rooms')
@@ -118,21 +118,32 @@ startBtn.addEventListener("click", async () => {
         
       currentRoomId = room.id;
 
+      // NOW set local description so ICE candidates start gathering with the room ID ready
+      await peerConnection.setLocalDescription(offer);
+
       // Listen for the Answer from the Callee
       supabase.channel('caller_room').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${currentRoomId}` }, 
-        (payload) => {
+        async (payload) => {
           if (payload.new.answer && !peerConnection.currentRemoteDescription) {
-            peerConnection.setRemoteDescription(new RTCSessionDescription(payload.new.answer));
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.new.answer));
             startBtn.textContent = "Connected!";
+            
+            // Fetch any ICE candidates the callee sent before we got the answer
+            const { data: candidates } = await supabase.from('candidates').select('*').eq('room_id', currentRoomId).eq('is_caller', false);
+            if (candidates) {
+                for (let c of candidates) {
+                    try { await peerConnection.addIceCandidate(new RTCIceCandidate(c.candidate)); } catch(e) {}
+                }
+            }
           }
         }
       ).subscribe();
 
-      // Listen for Callee's ICE Candidates
+      // Listen for Callee's ICE Candidates (Live)
       supabase.channel('caller_candidates').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'candidates', filter: `room_id=eq.${currentRoomId}` }, 
-        (payload) => {
-          if (payload.new.is_caller === false) { 
-            peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate));
+        async (payload) => {
+          if (payload.new.is_caller === false && peerConnection.currentRemoteDescription) { 
+            try { await peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate)); } catch(e) {}
           }
         }
       ).subscribe();
@@ -149,19 +160,29 @@ startBtn.addEventListener("click", async () => {
           isCaller = false;
           const offer = payload.new.offer;
 
-          // Accept Offer, Create Answer, and save to DB
+          // Accept Offer and set remote description
           await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+          
+          // Fetch any ICE candidates the caller sent before we were notified
+          const { data: candidates } = await supabase.from('candidates').select('*').eq('room_id', currentRoomId).eq('is_caller', true);
+          if (candidates) {
+              for (let c of candidates) {
+                  try { await peerConnection.addIceCandidate(new RTCIceCandidate(c.candidate)); } catch(e) {}
+              }
+          }
+
+          // Create Answer, start ICE gathering, and save to DB
           const answer = await peerConnection.createAnswer();
           await peerConnection.setLocalDescription(answer);
           await supabase.from('rooms').update({ answer: answer }).eq('id', currentRoomId);
           
           startBtn.textContent = "Connected!";
 
-          // Listen for Caller's ICE Candidates
+          // Listen for Caller's ICE Candidates (Live)
           supabase.channel('callee_candidates').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'candidates', filter: `room_id=eq.${currentRoomId}` }, 
-            (payload) => {
-              if (payload.new.is_caller === true) { 
-                peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate));
+            async (payload) => {
+              if (payload.new.is_caller === true && peerConnection.currentRemoteDescription) { 
+                try { await peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate)); } catch(e) {}
               }
             }
           ).subscribe();
