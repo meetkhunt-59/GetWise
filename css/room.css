@@ -36,7 +36,8 @@ body {
     height: 50%;
 }
 #stream-1{
-    background-image: url("../Users/abhirajsinhjadeja/vscode/GetWise/assets/images/pfp.jpg");
+    transform: scaleX(-1);
+    background-image: url("../assets/images/pfp.jpg");
     width: 47%;
     height: 50%;
     border: #FFFFFA 2px solid;
