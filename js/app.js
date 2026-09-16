@@ -121,6 +121,21 @@ startBtn.addEventListener("click", async () => {
       // NOW set local description so ICE candidates start gathering with the room ID ready
       await peerConnection.setLocalDescription(offer);
 
+      let callerCandidateQueue = [];
+
+      // Listen for Callee's ICE Candidates (Live) FIRST to avoid missing early candidates
+      supabase.channel('caller_candidates').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'candidates', filter: `room_id=eq.${currentRoomId}` }, 
+        async (payload) => {
+          if (payload.new.is_caller === false) { 
+            if (peerConnection.currentRemoteDescription) {
+              try { await peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate)); } catch(e) {}
+            } else {
+              callerCandidateQueue.push(payload.new.candidate);
+            }
+          }
+        }
+      ).subscribe();
+
       // Listen for the Answer from the Callee
       supabase.channel('caller_room').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${currentRoomId}` }, 
         async (payload) => {
@@ -135,15 +150,12 @@ startBtn.addEventListener("click", async () => {
                     try { await peerConnection.addIceCandidate(new RTCIceCandidate(c.candidate)); } catch(e) {}
                 }
             }
-          }
-        }
-      ).subscribe();
 
-      // Listen for Callee's ICE Candidates (Live)
-      supabase.channel('caller_candidates').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'candidates', filter: `room_id=eq.${currentRoomId}` }, 
-        async (payload) => {
-          if (payload.new.is_caller === false && peerConnection.currentRemoteDescription) { 
-            try { await peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate)); } catch(e) {}
+            // Process any live candidates that arrived while we were waiting for the answer
+            for (let c of callerCandidateQueue) {
+                try { await peerConnection.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+            }
+            callerCandidateQueue = [];
           }
         }
       ).subscribe();
@@ -160,6 +172,21 @@ startBtn.addEventListener("click", async () => {
           isCaller = false;
           const offer = payload.new.offer;
 
+          let calleeCandidateQueue = [];
+
+          // Listen for Caller's ICE Candidates (Live) FIRST to prevent missing candidates during setup
+          supabase.channel('callee_candidates').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'candidates', filter: `room_id=eq.${currentRoomId}` }, 
+            async (payload) => {
+              if (payload.new.is_caller === true) { 
+                if (peerConnection.currentRemoteDescription) {
+                  try { await peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate)); } catch(e) {}
+                } else {
+                  calleeCandidateQueue.push(payload.new.candidate);
+                }
+              }
+            }
+          ).subscribe();
+
           // Accept Offer and set remote description
           await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
           
@@ -171,21 +198,18 @@ startBtn.addEventListener("click", async () => {
               }
           }
 
+          // Process queued candidates that arrived during the few milliseconds of setup
+          for (let c of calleeCandidateQueue) {
+              try { await peerConnection.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+          }
+          calleeCandidateQueue = [];
+
           // Create Answer, start ICE gathering, and save to DB
           const answer = await peerConnection.createAnswer();
           await peerConnection.setLocalDescription(answer);
           await supabase.from('rooms').update({ answer: answer }).eq('id', currentRoomId);
           
           startBtn.textContent = "Connected!";
-
-          // Listen for Caller's ICE Candidates (Live)
-          supabase.channel('callee_candidates').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'candidates', filter: `room_id=eq.${currentRoomId}` }, 
-            async (payload) => {
-              if (payload.new.is_caller === true && peerConnection.currentRemoteDescription) { 
-                try { await peerConnection.addIceCandidate(new RTCIceCandidate(payload.new.candidate)); } catch(e) {}
-              }
-            }
-          ).subscribe();
         }
       ).subscribe();
     }
