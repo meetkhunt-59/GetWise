@@ -1,178 +1,294 @@
-/* Reset */
-*{
-    
+/* ==========================================================================
+   GetWise - Minimal Black & White Theme
+   ========================================================================== */
+
+/* Base Reset */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: #FFFFFA;
 }
 
 body {
-    background-image: url('../assets/images/blackhole-bg.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #000000;
+    color: #ededed;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Full viewport height */
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Navbar */
-.navbar{
-    margin-left: 180px;
-  width: 90%;
-    max-width: 1100px;
+/* Header & Navbar */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid #1f1f1f;
+}
+
+.navbar {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 28px;
+    padding: 16px 24px;
 }
 
-/* Logo */
-.logo-container{
+.logo-container {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: transparent;
-}
-
-.logo-img{
-    width: 50px;
-    height: 50px;
-    background: transparent;
-    margin-right: 20px;
-}
-
-.logo{
-    font-size: 30px;
-    font-weight: bold;
-    color: #FFFFFA;
+    gap: 12px;
     text-decoration: none;
-    background: transparent;
 }
 
-/* Navigation */
-.nav-links{
+.logo-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 6px;
+}
 
-    position: left;
-   display: flex;
+.logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
     align-items: center;
-    gap: 50px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 10px 26px;
-    border-radius: 999px;
-    backdrop-filter: blur(6px);
-
-    
+    gap: 12px;
+    list-style: none;
 }
 
-.nav-links li{
-    background: transparent;
-}
-
-.nav-links a{
-    color: white;
+.nav-links a {
+    color: #888888;
     text-decoration: none;
-    margin-left: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
-.nav-links a:first-child {
-    margin-left: 0;
-  }
- 
-  .right-side {
-    color: white;
-  }
 
+.nav-links a:hover {
+    color: #ffffff;
+    background-color: #141414;
+}
+
+/* Main Content Container */
 main {
     flex: 1;
-}
-
-.hero-container {
-    margin: auto;
-    margin-top: 70px;
-    font-size: 24px;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    padding: 50px 60px;
-    height: 70vh;
     width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
-.hero-container h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
+
+/* Hero Section */
+.hero-container {
+    text-align: center;
+    padding: 70px 0 50px;
 }
-.hero-container p {
-    font-size: 18px;
-    margin-bottom: 30px;
+
+#hero h1 {
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
 }
-.hero-container .cta {
+
+#hero p {
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    color: #888888;
+    max-width: 620px;
+    margin: 0 auto 32px;
+}
+
+/* High Contrast CTA Button */
+.cta {
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #EE9B00;
-    color: #FFFFFA;
+    padding: 13px 32px;
+    background-color: #ffffff;
+    color: #000000;
     text-decoration: none;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-    margin-top: 50px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
-#banner {
-    background-color:transparent;
+.cta:hover {
+    background-color: #e5e5e5;
+    transform: translateY(-2px);
+}
+
+.cta:active {
+    transform: translateY(0);
+}
+
+/* Hero Illustration */
+.hero-illustration {
+    margin-top: 48px;
+    border-radius: 16px;
     overflow: hidden;
-    margin:auto;
-    width: 50%;
+    border: 1px solid #222222;
+    background-color: #080808;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
-.features-container {
-    padding: 50px 60px;
-    display: flex;
-    background-color: #ee9b00c5;
-    border: 2px solid #FFFFFA;
-    font-size: 18px;
+.hero-illustration img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-#features{
-    background-color:transparent;
-    margin-top: 45px;
-    justify-content: space-around;
-    padding: 50px 60px;
+/* Features Section */
+#features {
+    padding: 70px 0 80px;
+    border-top: 1px solid #1a1a1a;
 }
 
-#features h2{
-    border: 2px solid black;background-color: #7D8491; margin: 20px; border-radius: 30px;
-    background-color:transparent;
+#features h2 {
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
 }
-#features p{
-    background-color:transparent;
+
+.features-subtitle {
     text-align: center;
-    font-size: 18px;
-    margin-bottom: 30px;
+    color: #777777;
+    font-size: 0.95rem;
+    margin-bottom: 40px;
 }
 
-
-.features-list {
-    background-color:transparent;
-    justify-content: space-around;
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 20px;
-    flex-wrap: wrap;
-    text-decoration: none;
-    list-style: none;
-    width: 50%;
-    margin: auto;
-    padding: 20px;
-}
-.features-list li {
-    background-color:transparent;
 }
 
+.feature-card {
+    background-color: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.feature-card:hover {
+    border-color: #383838;
+    background-color: #111111;
+}
+
+.feature-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    color: #888888;
+    line-height: 1.5;
+}
+
+/* Footer */
 footer {
-    padding: 20px;
-    margin-top: auto; 
+    border-top: 1px solid #1a1a1a;
+    background-color: #050505;
+    padding: 48px 24px 28px;
+}
+
+.footer-content {
+    max-width: 1080px;
+    margin: 0 auto 36px;
+    display: flex;
+    justify-content: space-around;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.footer-section h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-links a {
+    color: #777777;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #ffffff;
+}
+
+.footer-bottom {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid #141414;
     text-align: center;
-    align-items: center;
+}
+
+.footer-bottom p {
+    color: #555555;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.footer-bottom .copyright {
+    color: #3a3a3a;
+    font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 14px 18px;
+    }
+
+    .hero-container {
+        padding: 50px 0 36px;
+    }
+
+    .hero-illustration {
+        margin-top: 32px;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
 }

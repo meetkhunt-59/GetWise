@@ -1,24 +1,20 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <style>
-  table {
-    
-    border-spacing: 50px 0; 
-  }
-</style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GetWise</title>
+    <title>GetWise — Study Room</title>
     <meta name="description" content="GetWise - brainstorm your thoughts." />
     <link rel="icon" href="../assets/icons/favicon.ico" />
-    <!-- Add your stylesheet here -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/room.css" />
   </head>
 
   <body>
-    <header>
+    <header class="header">
       <nav class="navbar">
         <div class="logo-container">
           <img
@@ -35,15 +31,13 @@
           <li><a href="../index.html#contact">Contact</a></li>
         </ul>
       </nav>
-
-      <hr />
     </header>
 
-    <main>
+    <main class="room-main">
       <section id="video-streams">
         <div class="left-column">
           <div id="stream-1" class="left-boxes">
-            <video id="local-video" height="100%" width="100%" autoplay playsinline muted ></video>
+            <video id="local-video" autoplay playsinline muted></video>
           </div>
           <div id="notes" class="left-boxes">
             <textarea
@@ -51,62 +45,61 @@
               placeholder="Type your notes here..."
             ></textarea>
             <section class="save">
-            <button type="button" id="save-notes">
-                SAVE NOTES
-            </button>
+              <button type="button" id="save-notes">SAVE NOTES</button>
             </section>
           </div>
         </div>
         <div id="stream-2" class="right-boxe">
-            <video id="remote-video" autoplay playsinline></video>
+          <video id="remote-video" autoplay playsinline></video>
         </div>
       </section>
 
       <section id="controls" class="controls">
         <select id="standard-select" class="control-btn">
-                <option value="1">1st Standard</option>
-                <option value="2">2nd Standard</option>
-                <option value="3">3rd Standard</option>
-                <option value="4">4th Standard</option>
-                <option value="5">5th Standard</option>
-                <option value="6">6th Standard</option>
-                <option value="7">7th Standard</option>
-                <option value="8">8th Standard</option>
-                <option value="9">9th Standard</option>
-                <option value="10">10th Standard</option>
-                <option value="11">11th Standard</option>
-                <option value="12">12th Standard</option>
+          <option value="1">1st Standard</option>
+          <option value="2">2nd Standard</option>
+          <option value="3">3rd Standard</option>
+          <option value="4">4th Standard</option>
+          <option value="5">5th Standard</option>
+          <option value="6">6th Standard</option>
+          <option value="7">7th Standard</option>
+          <option value="8">8th Standard</option>
+          <option value="9">9th Standard</option>
+          <option value="10">10th Standard</option>
+          <option value="11">11th Standard</option>
+          <option value="12">12th Standard</option>
         </select>
         <button id="start-btn" class="control-btn">Start Call</button>
         <button id="mute-btn" class="control-btn">Mute Mic</button>
         <button id="end-btn" class="control-btn">End Call</button>
       </section>
     </main>
-    <hr />
-    <footer class="footer">
-      <center>
-		<table>
-  <tr>
-    <th><center>social media handles</center></th>
-    <th>other emails</th>
-  </tr>
-  <tr>
-    <td><a href="https://twitter.com" target="_blank">Twitter</a></td>
-    <td>abhiraj@1233gmail.com</td>
-  </tr>
-  <tr>
-    <td><a href="https://instagram.com" target="_blank">Instagram</a></td>
-    <td>meetkhunt56@gmail.com</td>
-  </tr>
-  <tr>
-    <td><a href="https://facebook.com" target="_blank">Facebook</a></td>
-    <td>gatewise123@gmail.com</td>
-  </tr>
-</table>
-</center><br><br>
 
-<p>we have developed a website for student , where students can virtually connect for their study interests, access study materials, and create, save, and manage their notes in one place.”</p><br>
-		<p>&copy; 2026 GetWise. All rights reserved.</p>
+    <footer id="contact">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Follow Us</h3>
+          <ul class="footer-links">
+            <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+            <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul class="footer-links">
+            <li><a href="mailto:abhiraj@1233gmail.com">abhiraj@1233gmail.com</a></li>
+            <li><a href="mailto:meetkhunt56@gmail.com">meetkhunt56@gmail.com</a></li>
+            <li><a href="mailto:gatewise123@gmail.com">gatewise123@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p id="about">We have developed a website for students, where students can virtually connect for their study interests, access study materials, and create, save, and manage their notes in one place.</p>
+        <p class="copyright">&copy; 2026 GetWise. All rights reserved.</p>
+      </div>
     </footer>
 
     <!-- Add your scripts here -->
